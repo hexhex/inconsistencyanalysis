@@ -1,15 +1,14 @@
-#USAGE: python buildIEMeta_X_X.py <file which holds the hex program> <domain-atoms>
+#USAGE: python buildIEMeta_X_X.py <file which holds the ASP program> <domain-atoms>
 #       <domain-atoms> is of the form: "a,b,c,d" where a,b,c and d are atoms which shall be in the domain
-#example: python buildIEMeta_1_0.py hexProg.txt "a,b,d,z"
+#The output is generated automatically by " n.meta" where n is the name of the <file which holds the ASP program>.
 
-#OUTPUT: n = name of <file which holds the hex program> --> n.meta
+#Example: python buildIEMeta_1_0.py aspProg.txt "a,b,d,z"
+#Output: aspProg.txt.meta
 
-#THE FILE WHICH HOLDS THE HEX PROGRAM MUST NOT CONTAIN:
-# -) strong-negation (if you have a and -a: REPLACE BY RULE: b :- a, na, not b where 'b' is a new atom and 'na' is '-a')
-#AND
-# -) constraints of the form " :- a" (REPLACE BY RULE: " b :- a, not b", where 'b' is a new atom).
-#AND
-# -) atoms of the name: "rX", where X = 1..#rules since it would collide with the rule-names created by this meta program.
+#THE FILE WHICH HOLDS THE ASP PROGRAM MUST NOT CONTAIN:
+# -) strong-negation (if you have a and -a: (Replace them by the rule: b :- a, na, not b where 'b' is a new atom and 'na' is '-a')
+# -) constraints of the form " :- a" (Replace them by the rule: " b :- a, not b", where 'b' is a new atom)
+# -) atoms of the name: "rX", where X = 1...#rules since it would collide with the rule-names created by this meta program.
 
 import sys
 from sets import Set
