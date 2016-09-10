@@ -1,0 +1,70 @@
+% a :- p, not a.
+% b :- q, not b.
+
+%pi_in
+head(r1,a). bodyP(r1,p). bodyN(r1,a). 
+head(r2,b). bodyP(r2,q). bodyN(r2,b). 
+
+%pi_auxFacts
+atom(A) :- head(_,A).
+atom(A) :- bodyP(_,A).
+atom(A) :- bodyN(_,A).
+
+rule(R) :- head(R,_).
+rule(R) :- bodyP(R,_).
+rule(R) :- bodyN(R,_).
+
+%pi_guessInt
+true(A) v false(A) :- atom(A).
+
+%pi_reduct
+inReduct(r1) :- false(a).
+inReduct(r2) :- false(b).
+inReduct(R) :- rule(R), not bodyN(R,a), not bodyN(R,p), not bodyN(R,b), not bodyN(R,q).
+outReduct(R) :- true(A), bodyN(R,A).
+order(A,I) v norder(A,I) :- true(A), #int(I), 0 <= I, I <= 3.
+
+%pi_ap
+notApplicable(R) :- rule(R), outReduct(R).
+notApplicable(R) :- inReduct(R), false(A), bodyP(R,A).
+notApplicable(R) :- head(R,H), order(H,I1), bodyP(R,B), order(B,I2), I2 >= I1.
+
+%pi_noAnswerSet
+noAnswerSet :- true(A), norder(A,0), norder(A,1), norder(A,2), norder(A,3).
+noAnswerSet :- order(A,I1), order(A,I2), I1 != I2.
+noAnswerSet :- true(a), notApplicable(r1), nfact(a).
+noAnswerSet :- true(p), nfact(p).
+noAnswerSet :- true(b), notApplicable(r2), nfact(b).
+noAnswerSet :- true(q), nfact(q).
+noAnswerSet :- false(A), inReduct(r1), head(r1,A), true(p).
+noAnswerSet :- false(A), inReduct(r2), head(r2,A), true(q).
+
+%pi_sat
+true(A) :- noAnswerSet, atom(A).
+false(A) :- noAnswerSet, atom(A).
+order(A,I) :- noAnswerSet, atom(A), #int(I), 0 <= I, I <= 4.
+norder(A,I) :- noAnswerSet, atom(A), #int(I), 0 <= I, I <= 4.
+inReduct(R) :- rule(R), noAnswerSet.
+outReduct(R) :- rule(R), noAnswerSet.
+
+%pi_domain
+domain(q). domain(p). 
+
+%pi_guessExplanations
+rp(A) v rm(A) v nr(A) :- domain(A).
+
+%pi_facts
+fact(A) v nfact(A) :- domain(A).
+nfact(A) :- atom(A), not domain(A). %If atom A is not in domain, it must not be a fact. 
+head(A,A) :- fact(A).
+
+%pi_invalidAnswerSet
+noAnswerSet :- rp(A), nfact(A).
+noAnswerSet :- rm(A), fact(A).
+noAnswerSet :- false(A), fact(A).
+:- not noAnswerSet.
+
+%pi_satFacts
+fact(A) :- noAnswerSet, domain(A).
+nfact(A) :- noAnswerSet, domain(A).
+

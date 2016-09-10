@@ -1,0 +1,72 @@
+% a :- b.
+% b :- c.
+% d :- a, not d.
+
+%pi_in
+head(r1,a). bodyP(r1,b). 
+head(r2,b). bodyP(r2,c). 
+head(r3,d). bodyP(r3,a). bodyN(r3,d). 
+
+%pi_auxFacts
+atom(A) :- head(_,A).
+atom(A) :- bodyP(_,A).
+atom(A) :- bodyN(_,A).
+
+rule(R) :- head(R,_).
+rule(R) :- bodyP(R,_).
+rule(R) :- bodyN(R,_).
+
+%pi_guessInt
+true(A) v false(A) :- atom(A).
+
+%pi_reduct
+inReduct(r3) :- false(d).
+inReduct(R) :- rule(R), not bodyN(R,a), not bodyN(R,c), not bodyN(R,b), not bodyN(R,d).
+outReduct(R) :- true(A), bodyN(R,A).
+order(A,I) v norder(A,I) :- true(A), #int(I), 0 <= I, I <= 3.
+
+%pi_ap
+notApplicable(R) :- rule(R), outReduct(R).
+notApplicable(R) :- inReduct(R), false(A), bodyP(R,A).
+notApplicable(R) :- head(R,H), order(H,I1), bodyP(R,B), order(B,I2), I2 >= I1.
+
+%pi_noAnswerSet
+noAnswerSet :- true(A), norder(A,0), norder(A,1), norder(A,2), norder(A,3).
+noAnswerSet :- order(A,I1), order(A,I2), I1 != I2.
+noAnswerSet :- true(a), notApplicable(r1), nfact(a).
+noAnswerSet :- true(c), nfact(c).
+noAnswerSet :- true(b), notApplicable(r2), nfact(b).
+noAnswerSet :- true(d), notApplicable(r3), nfact(d).
+noAnswerSet :- false(A), inReduct(r1), head(r1,A), true(b).
+noAnswerSet :- false(A), inReduct(r2), head(r2,A), true(c).
+noAnswerSet :- false(A), inReduct(r3), head(r3,A), true(a).
+
+%pi_sat
+true(A) :- noAnswerSet, atom(A).
+false(A) :- noAnswerSet, atom(A).
+order(A,I) :- noAnswerSet, atom(A), #int(I), 0 <= I, I <= 4.
+norder(A,I) :- noAnswerSet, atom(A), #int(I), 0 <= I, I <= 4.
+inReduct(R) :- rule(R), noAnswerSet.
+outReduct(R) :- rule(R), noAnswerSet.
+
+%pi_domain
+domain(a). domain(c). domain(b). domain(d). 
+
+%pi_guessExplanations
+rp(A) v rm(A) v nr(A) :- domain(A).
+
+%pi_facts
+fact(A) v nfact(A) :- domain(A).
+nfact(A) :- atom(A), not domain(A). %If atom A is not in domain, it must not be a fact. 
+head(A,A) :- fact(A).
+
+%pi_invalidAnswerSet
+noAnswerSet :- rp(A), nfact(A).
+noAnswerSet :- rm(A), fact(A).
+noAnswerSet :- false(A), fact(A).
+:- not noAnswerSet.
+
+%pi_satFacts
+fact(A) :- noAnswerSet, domain(A).
+nfact(A) :- noAnswerSet, domain(A).
+

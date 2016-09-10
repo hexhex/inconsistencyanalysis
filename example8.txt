@@ -1,0 +1,2 @@
+a :- p, not a.
+b :- q, not b.

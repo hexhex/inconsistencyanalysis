@@ -1,0 +1,2 @@
+p :- r, not q, not p.
+p :- s.
