@@ -1,14 +1,15 @@
 #USAGE: python buildIEMeta_X_X.py <file which holds the ASP program> <domain-atoms>
 #       <domain-atoms> is of the form: "a,b,c,d" where a,b,c and d are atoms which shall be in the domain
-#The output is generated automatically by " n.meta" where n is the name of the <file which holds the ASP program>.
+#The output is generated automatically by "n.meta" where n is the name of the <file which holds the ASP program>.
 
 #Example: python buildIEMeta_1_0.py aspProg.txt "a,b,d,z"
 #Output: aspProg.txt.meta
 
-#THE FILE WHICH HOLDS THE ASP PROGRAM MUST NOT CONTAIN:
-# -) strong-negation (if you have a and -a: (Replace them by the rule: b :- a, na, not b where 'b' is a new atom and 'na' is '-a')
-# -) constraints of the form " :- a" (Replace them by the rule: " b :- a, not b", where 'b' is a new atom)
-# -) atoms of the name: "rX", where X = 1...#rules since it would collide with the rule-names created by this meta program.
+#There are some restrictions how the passed ASP program must look like.
+#The program must not contain:
+# -) strong-negation (E.g., a and -a must be replaced by the rule "b :- a, na, not b" where b is a new atom and na is -a)
+# -) constraints of the form " :- a" (They must be replaced by the rule "b :- a, not b", where b is a new atom)
+# -) atoms of the name: "rX", where X = 1...#rules since these names are reserved for rule-names created by this meta program.
 
 import sys
 from sets import Set
@@ -92,37 +93,6 @@ ofile.write("rule(R) :- bodyP(R,_).\n")
 ofile.write("rule(R) :- bodyN(R,_).\n\n")
 #\RULE + ATOM
 
-#pi_domain
-#Add domain-atoms in the argument as facts to meta program
-ofile.write("%pi_domain\n")
-toBeWritten = ""
-for d in domainAtoms:
-    toBeWritten = toBeWritten + "domain("+d+"). "
-ofile.write(toBeWritten + "\n\n")
-
-#pi_guessExplanations
-ofile.write("%pi_guessExplanations\n")
-ofile.write("rp(A) v rm(A) v nr(A) :- domain(A).\n\n")
-
-#pi_facts
-ofile.write("%pi_facts\n")
-ofile.write("fact(A) v nfact(A) :- domain(A).\n")
-ofile.write("nfact(A) :- atom(A), not domain(A). %If atom A is not in domain, it must not be a fact. \n")
-ofile.write("head(A,A) :- fact(A).\n\n")
-
-#pi_satFacts
-ofile.write("%pi_satFacts\n")
-ofile.write("fact(A) :- noAnswerSet, domain(A).\n")
-ofile.write("nfact(A) :- noAnswerSet, domain(A).\n\n")
-
-#pi_invalidAnswerSet
-#Result is no answer set if it is contradictory to inconsistency-explanations
-ofile.write("%pi_invalidAnswerSet\n")
-ofile.write("noAnswerSet :- rp(A), nfact(A).\n")
-ofile.write("noAnswerSet :- rm(A), fact(A).\n")
-ofile.write("noAnswerSet :- false(A), fact(A).\n")
-ofile.write(":- not noAnswerSet.\n\n") #Delete all answer sets which are no explanation for an inconsistency
-
 #pi_guessInt
 ofile.write("%pi_guessInt\n")
 ofile.write("true(A) v false(A) :- atom(A).\n")
@@ -154,6 +124,14 @@ for a in atoms:
 ofile.write(toBeWritten[:-2] + ".\n")
 ofile.write("outReduct(R) :- true(A), bodyN(R,A).\n")
 ofile.write("order(A,I) v norder(A,I) :- true(A), #int(I), 0 <= I, I <= "+`atomCount-1`+".\n")
+
+ofile.write("\n")
+
+#pi_ap
+ofile.write("%pi_ap\n")
+ofile.write("notApplicable(R) :- rule(R), outReduct(R).\n")
+ofile.write("notApplicable(R) :- inReduct(R), false(A), bodyP(R,A).\n")
+ofile.write("notApplicable(R) :- head(R,H), order(H,I1), bodyP(R,B), order(B,I2), I2 >= I1.\n")
 
 ofile.write("\n")
 
@@ -202,14 +180,7 @@ for line in ifileContent:
     ruleCount = ruleCount + 1
 
 ofile.write("\n")
-    
-#pi_ap
-ofile.write("%pi_ap\n")
-ofile.write("notApplicable(R) :- rule(R), outReduct(R).\n")
-ofile.write("notApplicable(R) :- inReduct(R), false(A), bodyP(R,A).\n")
-ofile.write("notApplicable(R) :- head(R,H), order(H,I1), bodyP(R,B), order(B,I2), I2 >= I1.\n")
 
-ofile.write("\n")
 
 #pi_sat
 ofile.write("%pi_sat\n")
@@ -219,6 +190,39 @@ ofile.write("order(A,I) :- noAnswerSet, atom(A), #int(I), 0 <= I, I <= "+`atomCo
 ofile.write("norder(A,I) :- noAnswerSet, atom(A), #int(I), 0 <= I, I <= "+`atomCount`+".\n")
 ofile.write("inReduct(R) :- rule(R), noAnswerSet.\n")
 ofile.write("outReduct(R) :- rule(R), noAnswerSet.\n")
+
+ofile.write("\n")
+
+#pi_domain
+#Add domain-atoms in the argument as facts to meta program
+ofile.write("%pi_domain\n")
+toBeWritten = ""
+for d in domainAtoms:
+    toBeWritten = toBeWritten + "domain("+d+"). "
+ofile.write(toBeWritten + "\n\n")
+
+#pi_guessExplanations
+ofile.write("%pi_guessExplanations\n")
+ofile.write("rp(A) v rm(A) v nr(A) :- domain(A).\n\n")
+
+#pi_facts
+ofile.write("%pi_facts\n")
+ofile.write("fact(A) v nfact(A) :- domain(A).\n")
+ofile.write("nfact(A) :- atom(A), not domain(A). %If atom A is not in domain, it must not be a fact. \n")
+ofile.write("head(A,A) :- fact(A).\n\n")
+
+#pi_invalidAnswerSet
+#Result is no answer set if it is contradictory to inconsistency-explanations
+ofile.write("%pi_invalidAnswerSet\n")
+ofile.write("noAnswerSet :- rp(A), nfact(A).\n")
+ofile.write("noAnswerSet :- rm(A), fact(A).\n")
+ofile.write("noAnswerSet :- false(A), fact(A).\n")
+ofile.write(":- not noAnswerSet.\n\n") #Delete all answer sets which are no explanation for an inconsistency
+
+#pi_satFacts
+ofile.write("%pi_satFacts\n")
+ofile.write("fact(A) :- noAnswerSet, domain(A).\n")
+ofile.write("nfact(A) :- noAnswerSet, domain(A).\n\n")
 
 ofile.close()
 ifile.close()
