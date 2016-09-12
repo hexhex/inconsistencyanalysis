@@ -136,7 +136,7 @@ ofile.write("notApplicable(R) :- head(R,H), order(H,I1), bodyP(R,B), order(B,I2)
 ofile.write("\n")
 
 #pi_noAnswerSet
-ofile.write("%pi_noAnswerSet\n")
+ofile.write("%pi_noAS\n")
 toBeWritten = "noAnswerSet :- true(A), "
 norder = "norder(A,"
 
@@ -202,7 +202,7 @@ for d in domainAtoms:
 ofile.write(toBeWritten + "\n\n")
 
 #pi_guessExplanations
-ofile.write("%pi_guessExplanations\n")
+ofile.write("%pi_guessExpl\n")
 ofile.write("rp(A) v rm(A) v nr(A) :- domain(A).\n\n")
 
 #pi_facts
@@ -213,7 +213,7 @@ ofile.write("head(A,A) :- fact(A).\n\n")
 
 #pi_invalidAnswerSet
 #Result is no answer set if it is contradictory to inconsistency-explanations
-ofile.write("%pi_invalidAnswerSet\n")
+ofile.write("%pi_invalidAS\n")
 ofile.write("noAnswerSet :- rp(A), nfact(A).\n")
 ofile.write("noAnswerSet :- rm(A), fact(A).\n")
 ofile.write("noAnswerSet :- false(A), fact(A).\n")
