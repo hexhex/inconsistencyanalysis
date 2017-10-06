@@ -13,7 +13,7 @@ if [[ $all -eq 1 ]]; then
 	$bmscripts/runinsts.sh "instances/*.graph" "$mydir/run.sh" "$mydir" "$to" "" "" "$req"
 else
 	mydir=$(dirname $0)
-        confstr="dlvhex2 checkNon3ColorabilityPlain.hex $instance;dlvhex2 --plugindir=$mydir/../../../core/testsuite checkNon3Colorability.hex $instance;$mydir/../../Queries/evaluateProgramWithQueries.sh checkNon3ColorabilityQueries.hex $instance;$mydir/../../Queries/evaluateProgramWithQueries.sh checkNon3ColorabilityOutsourced.hex $instance"
+        confstr="dlvhex2 checkNon3ColorabilityPlain.hex $instance;dlvhex2 --plugindir=$mydir/../../../core/testsuite checkNon3ColorabilityExtSat.hex $instance;$mydir/../../Queries/evaluateProgramWithQueries.sh checkNon3ColorabilityExtSatQueries.hex $instance;dlvhex2 --plugindir=$mydir/../../../core/testsuite checkNon3ColorabilityOutsourced.hex $instance;$mydir/../../Queries/evaluateProgramWithQueries.sh checkNon3ColorabilityOutsourcedQueries.hex $instance"
 
 	$bmscripts/runconfigs.sh "CONF" "$confstr" "$instance" "$to" "$bmscripts/ansctimeoutputbuilder.sh"
 fi

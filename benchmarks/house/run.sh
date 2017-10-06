@@ -13,7 +13,7 @@ if [[ $all -eq 1 ]]; then
 	$bmscripts/runinsts.sh "instances/*.graph" "$mydir/run.sh" "$mydir" "$to" "" "" "$req"
 else
 	mydir=$(dirname $0)
-	confstr="dlvhex2 --plugindir=$mydir/../../../core/testsuite houseGuess.hex $instance;$mydir/../../Queries/evaluateProgramWithQueries.sh computeHouseQueries.hex $instance"
+	confstr="dlvhex2 --plugindir=$mydir/../../../core/testsuite housePlain.hex $instance;dlvhex2 --plugindir=$mydir/../../../core/testsuite houseOutsourced.hex $instance;$mydir/../../Queries/evaluateProgramWithQueries.sh houseOutsourcedQueries.hex $instance"
 
 	$bmscripts/runconfigs.sh "CONF" "$confstr" "$instance" "$to" "$bmscripts/ansctimeoutputbuilder.sh"
 fi
