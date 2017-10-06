@@ -17,7 +17,7 @@ input(coloring(N, C)) :- coloring(N, C).
 input(edge(X, Y)) :- edge(X, Y).
 
 % check if the guessed coloring is invalid
-sat :- CHEX[check3Colorings, input, invalid]().
+sat :- CHEX[check3Coloring, input, invalid]().
 
 % if yes, then saturate
 coloring(N, C) :- sat, node(N), color(C).

@@ -12,7 +12,8 @@ if [[ $all -eq 1 ]]; then
 	# run all instances using the benchmark script run insts
 	$bmscripts/runinsts.sh "instances/*.graph" "$mydir/run.sh" "$mydir" "$to" "" "" "$req"
 else
-        confstr="dlvhex2 checkNon3ColorabilityPlain.hex $instance;dlvhex2 --plugindir=../../../core/testsuite checkNon3Colorability.hex $instance;../../Queries/evaluateProgramWithQueries.sh checkNon3ColorabilityQueries.hex $instance"
+	mydir=$(dirname $0)
+        confstr="dlvhex2 checkNon3ColorabilityPlain.hex $instance;dlvhex2 --plugindir=$mydir/../../../core/testsuite checkNon3Colorability.hex $instance;$mydir/../../Queries/evaluateProgramWithQueries.sh checkNon3ColorabilityQueries.hex $instance;$mydir/../../Queries/evaluateProgramWithQueries.sh checkNon3ColorabilityOutsourced.hex $instance"
 
 	$bmscripts/runconfigs.sh "CONF" "$confstr" "$instance" "$to" "$bmscripts/ansctimeoutputbuilder.sh"
 fi

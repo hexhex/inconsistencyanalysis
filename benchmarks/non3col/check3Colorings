@@ -1,2 +1,12 @@
-% check current coloring
-invalid :- input(coloring(N, C)), input(coloring(M, C)), input(edge(N, M)).
+% if there is a 3-coloring
+edge(X,Y) :- input(edge(X,Y)).
+node(X) :- edge(X,Y).
+node(Y) :- edge(X,Y).
+
+% guess colorings
+coloring(X,red) :- node(X), not coloring(X,green), not coloring(X,blue).
+coloring(X,green) :- node(X), not coloring(X,red), not coloring(X,blue).
+coloring(X,blue) :- node(X), not coloring(X,red), not coloring(X,green).
+
+% check only current coloring
+invalid :- coloring(X, C), coloring(Y, C), edge(X, Y).

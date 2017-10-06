@@ -1,0 +1,11 @@
+node(X) :- edge(X, Y).
+node(Y) :- edge(X, Y).
+
+% graph is undirected
+edge(Y, X) :- edge(X, Y).
+
+% prepare input to external atom
+input(edge(X, Y)) :- edge(X, Y).
+
+% check if the guessed coloring is invalid
+non3col :- CHEX[check3Colorings, input, invalid]().
