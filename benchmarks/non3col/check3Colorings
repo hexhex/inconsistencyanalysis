@@ -1,0 +1,2 @@
+% check current coloring
+invalid :- input(coloring(N, C)), input(coloring(M, C)), input(edge(N, M)).

@@ -63,7 +63,7 @@ do
 				else
 					guard=$(echo "$guard, head($index,R$atomnr,$line)")
 				fi
-				nvariables=$(echo -n $line | grep -o '[A-Z][[:alpha:]]*')
+				nvariables=$(echo -n $line | grep -o '[A-Z][[:alnum:]]*')
 				if [[ "$variables" == "" ]]; then
 					variables="$nvariables"
 				else

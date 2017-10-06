@@ -1,8 +1,10 @@
 #!/bin/bash
 
+mydir=$(dirname $0)
 tmpfile=$(mktemp)
-./inlineQueries.sh $1 > $tmpfile
-cat meta.encoding > p
+$mydir/inlineQueries.sh $1 > $tmpfile
+cat $mydir/meta.encoding > p
 cat $tmpfile >> p
-dlvhex2 ${@:2} meta.encoding $tmpfile
+#cat $mydir/meta.encoding $tmpfile
+dlvhex2 ${@:2} $mydir/meta.encoding $tmpfile
 rm $tmpfile

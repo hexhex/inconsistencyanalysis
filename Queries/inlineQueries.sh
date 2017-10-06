@@ -1,18 +1,22 @@
 #!/bin/bash
 
+mydir=$(dirname $0)
 prog=$(cat $1 |
-	sed 's/CHEX *\[ *\([[:alpha:]]*\) *, *\([[:alpha:]]*\) *, *\([[:alpha:]]*\) *\] *( *)/noAS(S=pos, T=cautious, F=\1, Q=\3)/g' |
-	sed 's/BHEX *\[ *\([[:alpha:]]*\) *, *\([[:alpha:]]*\) *, *\([[:alpha:]]*\) *\] *( *)/noAS(S=pos, T=brave, F=\1, Q=\3)/g')
+	sed 's/CHEX *\[ *\([[:alnum:]]*\) *, *\([[:alnum:]]*\) *, *\([[:alnum:]]*\) *\] *( *)/noAS(S=pos, T=cautious, F=\1, I=\2, Q=\3)/g' |
+	sed 's/BHEX *\[ *\([[:alnum:]]*\) *, *\([[:alnum:]]*\) *, *\([[:alnum:]]*\) *\] *( *)/noAS(S=pos, T=brave, F=\1, I=\2, Q=\3)/g')
 
-queries=$(echo $prog | grep -o "noAS(S=[[:alpha:]]*, T=[[:alpha:]]*, F=[[:alpha:]]*, Q=[[:alpha:]]*)")
+# inline all queries
+queries=$(echo $prog | grep -o "noAS(S=[[:alnum:]]*, T=[[:alnum:]]*, F=[[:alnum:]]*, I=[[:alnum:]]*, Q=[[:alnum:]]*)")
 echo $queries |
 while read -r line
 do
-	sign=$(echo $line | sed 's/.*S=\([[:alpha:]]*\).*/\1/')
-	querytype=$(echo $line | sed 's/.*T=\([[:alpha:]]*\).*/\1/')
-	filename=$(echo $line | sed 's/.*F=\([[:alpha:]]*\).*/\1/')
-	queryatom=$(echo $line | sed 's/.*Q=\([[:alpha:]]*\).*/\1/')
-	./encodeProgram.sh $filename $filename
+	# inline current query
+	sign=$(echo $line | sed 's/.*S=\([[:alnum:]]*\).*/\1/')
+	querytype=$(echo $line | sed 's/.*T=\([[:alnum:]]*\).*/\1/')
+	filename=$(echo $line | sed 's/.*F=\([[:alnum:]]*\).*/\1/')
+        queryinput=$(echo $line | sed 's/.*I=\([[:alnum:]]*\).*/\1/')
+	queryatom=$(echo $line | sed 's/.*Q=\([[:alnum:]]*\).*/\1/')
+	$mydir/encodeProgram.sh $filename $filename
 	if [[ $querytype == "brave" ]]; then
 		echo "head($filename,query,queryconstraintatom)."
 		echo "bodyN($filename,query,queryconstraintatom)."
@@ -31,8 +35,12 @@ do
                         echo "bodyN($filename,query,$queryatom)."
                 fi
         fi
+
+	# add query input as facts
+	echo "head($filename,input(X),$queryinput(X)) :- $queryinput(X)."
 done
 
+
 cat $1 |
-        sed 's/CHEX *\[ *\([[:alpha:]]*\) *, *\([[:alpha:]]*\) *, *\([[:alpha:]]*\) *\] *( *)/noAS(\1)/g' |
-        sed 's/BHEX *\[ *\([[:alpha:]]*\) *, *\([[:alpha:]]*\) *, *\([[:alpha:]]*\) *\] *( *)/not noAS(\1)/g'
+        sed 's/CHEX *\[ *\([[:alnum:]]*\) *, *\([[:alnum:]]*\) *, *\([[:alnum:]]*\) *\] *( *)/noAS(\1)/g' |
+        sed 's/BHEX *\[ *\([[:alnum:]]*\) *, *\([[:alnum:]]*\) *, *\([[:alnum:]]*\) *\] *( *)/not noAS(\1)/g'

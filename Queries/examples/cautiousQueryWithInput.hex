@@ -1,0 +1,2 @@
+p(a) v p(b).
+ok :- CHEX[subprogram, p, qu]().
