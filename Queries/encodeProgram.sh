@@ -6,8 +6,8 @@ if [[ $# -ge 2 ]]; then
 fi
 echo "index($index)."
 
-atomcnt=$(gringo $1 2>/dev/null | sed -n '/^0$/,/^0$/p' | grep -v "^0" | wc -l)
-echo "int($index, 0..$atomcnt)".
+#atomcnt=$(gringo $1 2>/dev/null | sed -n '/^0$/,/^0$/p' | grep -v "^0" | wc -l)
+#echo "int($index, 0..$atomcnt)".
 
 haveHead=0
 body=0
