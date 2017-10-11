@@ -1,4 +1,4 @@
-% extract
+% ----- extract -----
 atom(Index, X) :- head(Index, R, X), index(Index).
 atom(Index, X) :- bodyP(Index, R, X), index(Index).
 atom(Index, X) :- bodyN(Index, R, X), index(Index).
@@ -6,51 +6,47 @@ rule(Index, R) :- head(Index, R, X), index(Index).
 rule(Index, R) :- bodyP(Index, R, X), index(Index).
 rule(Index, R) :- bodyN(Index, R, X), index(Index).
 
-% guess
+% ----- guess -----
 true(Index, X) | false(Index, X) :- atom(Index, X), index(Index).
 
-% check
+% ----- check -----
 inReduct(Index, R) :- rule(Index, R), false(Index, X) : bodyN(Index, R, X), index(Index).
 outReduct(Index, R) :- rule(Index, R), bodyN(Index, R, X), true(Index, X), index(Index).
 
+% the derivation sequence is only relevant for atoms who depend on each other in a head-body relation
+dep(Index, X, Z) :- head(Index, R, X), bodyP(Index, R, Z), index(Index).
+dep(Index, X, Z) :- dep(Index, Z, X), index(Index).
+%dep(Index, X, Y) :- atom(Index, X), atom(Index, Y).
 
-derivationSeq(Index, X, Y) | derivationSeq(Index, Y, X) :- true(Index, X), true(Index, Y), X != Y, index(Index).            % guess derivation sequence
-derivationSeq(Index, X, Z) :- derivationSeq(Index, X, Y), derivationSeq(Index, Y, Z), index(Index).
-notApp(Index, R) :- outReduct(Index, R), index(Index).                                                                      % rule is not applicable if it is not in the reduct
-notApp(Index, R) :- inReduct(Index, R), bodyP(Index, R, X), false(Index, X), index(Index).                                  % rule is not applicable if the positive body is not satisfied
-notApp(Index, R):- head(Index, R, X1), bodyP(Index, R, X2), derivationSeq(Index, X1, X2).                                   % rule is not applicable if head is derived earlier than one of the positive body atoms
-noAS(Index) :- true(Index, X), notApp(Index, R) : head(Index, R, X), index(Index).                                          % guess is not a valid answer set if positive atom cannot be justified by a rule
-noAS(Index) :- inReduct(Index, R), head(Index, R, X), false(Index, X), true(Index, Y) : bodyP(Index, R, Y), index(Index).   % guess is not a valid answer set if a rule is unsatisfied
-%notApp(Index, R) :- head(Index, R, X1), iter(Index, X1, I1), I1 > 0, I2 = I1 - 1, iterst(Index, X2, I2) : bodyP(Index, R, X2), index(Index). % rule is not applicable if an atom is not derived in the earliest possible iteration
+% guess derivation sequence
+derivationSeq(Index, X, Y) | derivationSeq(Index, Y, X) :- true(Index, X), true(Index, Y), X != Y, dep(Index, X, Y), index(Index).
+derivationSeq(Index, X, Z) :- derivationSeq(Index, X, Y), derivationSeq(Index, Y, Z), dep(Index, X, Z), index(Index).
 
-% if an atom X1 is derivable (i.e., a rule is applicable whose positive body atoms are derived before X1),
-% then it must be derived before any lexicographically larger atom X2 is derived
+% To eliminate redundant solutions in the non-saturated case, we require atoms to be derived in lexicographic order whenever possible.
+% Precisely: if an atom X1 becomes derivable by a rule r (i.e., all positive body atoms of r are derived before X1),
+% then X1 must be derived before any lexicographically larger atom X2 is derived.
+% Important: this does not destroy the saturation encoding because the saturated interpretation is just extended by
+% positive atoms, it is still unique, and still larger than all non-saturated models.
 derivationSeq(Index, X1, X2) :- head(Index, R, X1), derivationSeq(Index, Y, X1) : bodyP(Index, R, Y);
-                                atom(Index, X2), derivationSeq(Index, Y, X2) : bodyP(Index, R, Y); X2 > X1.
+                                atom(Index, X2), derivationSeq(Index, Y, X2) : bodyP(Index, R, Y);
+                                X2 > X1, index(Index).
 
+%:~ true(Index, X). [1@1]
+%#show non3col/0.
 
+% identify rules which are not applicable for justifying its head atom being true
+notApp(Index, R) :- outReduct(Index, R), index(Index).                                                                                     % rule is not applicable if it is not in the reduct
+notApp(Index, R) :- inReduct(Index, R), bodyP(Index, R, X), false(Index, X), index(Index).                                                 % rule is not applicable if the positive body is not satisfied
+notApp(Index, R):- head(Index, R, X1), bodyP(Index, R, X2), derivationSeq(Index, X1, X2).                                                  % rule is not applicable if head is derived earlier than one of the positive body atoms
 
+% check answer set candidate
+noAS(Index) :- true(Index, X), notApp(Index, R) : head(Index, R, X), index(Index).                                                         % guess is not a valid answer set if positive atom cannot be justified by a rule (minimality)
+noAS(Index) :- inReduct(Index, R), head(Index, R, X), false(Index, X), true(Index, Y) : bodyP(Index, R, Y), index(Index).                  % guess is not a valid answer set if a rule is unsatisfied
 
-%%iter(Index, X, I) | niter(Index, X, I) :- true(Index, X), int(Index, I), index(Index).
-%iter(Index, X, I) : int(Index, I) :- true(Index, X), index(Index).
-%niter(Index, X, I) :- false(Index, X), int(Index, I), index(Index).
-%app(Index, R, I) :- rule(Index, R), iterst(Index, X, I) : bodyP(Index, R, X).
-%notApp(Index, R) :- outReduct(Index, R), index(Index).
-%notApp(Index, R) :- inReduct(Index, R), bodyP(Index, R, X), false(Index, X), index(Index).
-%notApp(Index, R):- head(Index, R, X1), bodyP(Index, R, X2), iter(Index, X1, I1), iter(Index, X2, I2), I2 >= I1, index(Index). %!
-%noAS(Index) :- true(Index, X), notApp(Index, R) : head(Index, R, X), index(Index).
-%noAS(Index) :- inReduct(Index, R), head(Index, R, X), false(Index, X), true(Index, Y) : bodyP(Index, R, Y), index(Index).
-%noAS(Index) :- true(Index, X), niter(Index, X, I) : int(Index, I), index(Index).
-%%noAS(Index) :- iter(Index, X, I1), iter(Index, X, I2), I1 != I2, index(Index). %!ok
-%iterst(Index, X, I) :- false(Index, X), int(Index, I), index(Index).
-%iterst(Index, X, I2) :- true(Index, X), iter(Index, X, I1), int(Index, I2), I2 > I1, index(Index). %!
-%notApp(Index, R) :- head(Index, R, X1), iter(Index, X1, I1), I1 > 0, I2 = I1 - 1, iterst(Index, X2, I2) : bodyP(Index, R, X2), index(Index).
-
-% saturate
+% ----- saturate -----
 true(Index, X) :- atom(Index, X), noAS(Index), index(Index).
 false(Index, X) :- atom(Index, X), noAS(Index), index(Index).
-%iter(Index, X, I) :- atom(Index, X), int(Index, I), noAS(Index), index(Index).
-%niter(Index, X, I) :- atom(Index, X), int(Index, I), noAS(Index), index(Index).
-derivationSeq(Index, X, Y) :- atom(Index, X), atom(Index, Y), noAS(Index), index(Index).
+derivationSeq(Index, X, Y) :- atom(Index, X), atom(Index, Y), noAS(Index), dep(Index, X, Y), index(Index).
+derivationSeq(Index, Y, X) :- atom(Index, X), atom(Index, Y), noAS(Index), dep(Index, X, Y), index(Index).
 inReduct(Index, R) :- rule(Index, R), noAS(Index), index(Index).
 outReduct(Index, R) :- rule(Index, R), noAS(Index), index(Index).
