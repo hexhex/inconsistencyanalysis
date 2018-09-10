@@ -19,6 +19,7 @@ outReduct(Index, R) :- rule(Index, R), bodyN(Index, R, X), true(Index, X), index
 
 % simulate immediate consequence operator
 steps(0..5).
+%steps(0..S) :- S = #count{ X : atom(X) }.
 out(Index, X, 0) :- atom(Index, X). % before the first iteration everything is out
 in(Index, X, NextStep) :- inReduct(Index, R), head(Index, R, X), steps(Step), steps(NextStep), NextStep = Step + 1, in(Index, A, Step) : bodyP(Index, R, A). % atom becomes derivable
 notApplicable(Index, R, Step) :- steps(Step), outReduct(Index, R). % rule is not applicable in any Step if it is not even in the reduct

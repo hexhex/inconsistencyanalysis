@@ -11,7 +11,7 @@ coloring(N, green) :- node(N), not coloring(N, red), not coloring(N, blue).
 
 % check current coloring
 invalid :- coloring(N, C), coloring(M, C), edge(N, M).
-edge(1,1).
+%edge(1,1).
 edge(1,2).
 edge(2,4).
 edge(2,8).
