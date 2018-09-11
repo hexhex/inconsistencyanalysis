@@ -1,0 +1,14 @@
+true(X) :- input(true(X)).
+false(X) :- input(false(X)).
+true(X) :- input(forall(X)), not false(X).
+false(X) :- input(forall(X)), not true(X).
+true(true).
+false(false).
+sat :- input(term(0, X, 0, Y, 0, Z)), false(X), false(Y), false(Z).
+sat :- input(term(1, X, 0, Y, 0, Z)), true(X), false(Y), false(Z).
+sat :- input(term(0, X, 1, Y, 0, Z)), false(X), true(Y), false(Z).
+sat :- input(term(0, X, 0, Y, 1, Z)), false(X), false(Y), true(Z).
+sat :- input(term(1, X, 1, Y, 0, Z)), true(X), true(Y), false(Z).
+sat :- input(term(1, X, 0, Y, 1, Z)), true(X), false(Y), true(Z).
+sat :- input(term(0, X, 1, Y, 1, Z)), false(X), true(Y), true(Z).
+sat :- input(term(1, X, 1, Y, 1, Z)), true(X), true(Y), true(Z).

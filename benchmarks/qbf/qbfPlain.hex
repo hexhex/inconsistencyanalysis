@@ -1,0 +1,15 @@
+true(X) v false(X) :- exists(X).
+true(X) v false(X) :- forall(X).
+true(true).
+false(false).
+sat :- term(0, X, 0, Y, 0, Z), false(X), false(Y), false(Z).
+sat :- term(1, X, 0, Y, 0, Z), true(X), false(Y), false(Z).
+sat :- term(0, X, 1, Y, 0, Z), false(X), true(Y), false(Z).
+sat :- term(0, X, 0, Y, 1, Z), false(X), false(Y), true(Z).
+sat :- term(1, X, 1, Y, 0, Z), true(X), true(Y), false(Z).
+sat :- term(1, X, 0, Y, 1, Z), true(X), false(Y), true(Z).
+sat :- term(0, X, 1, Y, 1, Z), false(X), true(Y), true(Z).
+sat :- term(1, X, 1, Y, 1, Z), true(X), true(Y), true(Z).
+true(X) :- sat, forall(X).
+false(X) :- sat, forall(X).
+:- not sat.
