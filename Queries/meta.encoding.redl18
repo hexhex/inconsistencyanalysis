@@ -18,13 +18,14 @@ outReduct(Index, R) :- rule(Index, R), bodyN(Index, R, X), true(Index, X), index
 
 % simulate immediate consequence operator
 steps(0..S) :- S = #count{ X : atom(X) }.
+stepCount(S) :- S = #count{ X : atom(X) }.
 out(Index, X, 0) :- atom(Index, X).                                                                                                                            % before the first iteration everything is out
 in(Index, X, NextStep) :- inReduct(Index, R), head(Index, R, X), steps(Step), steps(NextStep), NextStep = Step + 1, in(Index, A, Step) : bodyP(Index, R, A).   % atom becomes derivable
 notApplicable(Index, R, Step) :- steps(Step), outReduct(Index, R).                                                                                             % rule is not applicable in any step if it is not even in the reduct
 notApplicable(Index, R, Step) :- bodyP(Index, R, A), out(Index, R, Step).                                                                                      % rule is not applicable in Step if a positive body atom is not derived yet
-out(Index, X, NextStep) :- out(Index, X, Step), steps(NextStep), NextStep = Step + 1, notApplicable(Index, R, Step) : head(Index, R, X).                       % atom still not derivable if no rule which derives it is applicable
-inMinModel(Index, X) :- in(Index, X, 5).
-outMinModel(Index, X) :- out(Index, X, 5).
+out(Index, X, NextStep) :- out(Index, X, Step), steps(NextStep), NextStep = Step + 1, notApplicable(Index, R, Step) : head(Index, R, X), rule(Index, R).       % atom still not derivable if no rule which derived it is applicable
+inMinModel(Index, X) :- in(Index, X, SC), stepCount(S).
+outMinModel(Index, X) :- out(Index, X, SC), stepCount(S).
 
 % compare
 noAS(Index) :- true(Index, X), outMinModel(Index, X).
