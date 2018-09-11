@@ -1,0 +1,13 @@
+% prepare input to external atom
+de(X) :- edge(X, Y).
+node(Y) :- edge(X, Y).
+
+% graph is undirected
+edge(Y, X) :- edge(X, Y).
+
+% prepare input to external atom
+input(edge(X, Y)) :- edge(X, Y).
+
+% check if all guesses are invalid
+noncol :- &testCautiousQuery[checkColorings, input, invalid]().
+:- not noncol.
