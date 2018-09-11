@@ -1,7 +1,7 @@
-true(X) v false(X) :- exists(X).
+t(X) v f(X) :- exists(X).
 
-input(true(X)) :- true(X).
-input(false(X)) :- false(X).
+input(t(X)) :- t(X).
+input(f(X)) :- f(X).
 input(exists(X)) :- exists(X).
 input(forall(X)) :- forall(X).
 input(term(X, Y, Z, NX, NY, NZ)) :- term(X, Y, Z, NX, NY, NZ).

@@ -1,6 +1,3 @@
-node(X) :- edge(X, Y).
-node(Y) :- edge(X, Y).
-
 % graph is undirected
 edge(Y, X) :- edge(X, Y).
 
@@ -9,4 +6,4 @@ input(edge(X, Y)) :- edge(X, Y).
 
 % check if all guesses are invalid
 noncol :- CHEX[checkColorings, input, invalid]().
-:- not noncol.
+%:- not noncol.
