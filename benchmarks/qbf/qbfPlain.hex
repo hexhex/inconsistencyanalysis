@@ -1,5 +1,5 @@
-t(X) v f(X) :- exists(X).
-t(X) v f(X) :- forall(X).
+t(X) | f(X) :- exists(X).
+t(X) | f(X) :- forall(X).
 t(true).
 f(false).
 sat :- term(0, X, 0, Y, 0, Z), f(X), f(Y), f(Z).

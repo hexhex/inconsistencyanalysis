@@ -39,7 +39,6 @@ elif [[ "$encoding" = "external" ]]; then
 	encodingfile=""
 else
 	echo "Unknown encoding: $encoding" 1>&2
-	$inlinedprogram
 	exit 1
 fi
 
