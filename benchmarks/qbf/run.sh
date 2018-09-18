@@ -13,8 +13,7 @@ if [[ $all -eq 1 ]]; then
 	$bmscripts/runinsts.sh "instances/*.inst" "$mydir/run.sh" "$mydir" "$to" "" "" "$req"
 else
 	mydir=$(dirname $0)
-#	confstr="dlvhex2 qbfPlain.hex $instance;dlvhex2 --plugindir=$mydir/../../../core/testsuite qbfExt.hex $instance;$mydir/../../Queries/evaluateProgramWithQueries_EiterPolleres06.sh qbfQueries.hex $instance;$mydir/../../Queries/evaluateProgramWithQueries_Redl18.sh qbfQueries.hex $instance"
-	confstr="clingo qbfPlain.hex $instance;$mydir/../../Queries/evaluate.sh dlvhex2 external qbfQueries.hex $instance;$mydir/../../Queries/evaluate.sh potassco eiterpolleres06 qbfQueries.hex $instance;$mydir/../../Queries/evaluate.sh potassco redl18 qbfQueries.hex $instance"
+	confstr="$mydir/callclingo.sh qbfPlain.hex $instance;$mydir/../../Queries/evaluate.sh dlvhex2 external qbfQueries.hex $instance;$mydir/../../Queries/evaluate.sh potassco eiterpolleres06 qbfQueries.hex $instance;$mydir/../../Queries/evaluate.sh potassco redl18 qbfQueries.hex $instance"
 
 	$bmscripts/runconfigs.sh "CONF" "$confstr" "$instance" "$to" ""
 fi
