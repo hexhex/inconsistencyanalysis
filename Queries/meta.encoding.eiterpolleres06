@@ -12,7 +12,7 @@ rule(Index, R) :- bodyN(Index, R, X), index(Index).
 potentiallyApplicableRule(Index, R) :- rule(Index, R).                                                                                     % opt_pa
 
 % ----- guess -----
-true(Index, X) | false(Index, X) :- atom(Index, X), index(Index).
+true(Index, X) | false(Index, X) :- atom(Index, X), head(Index, R, X), potentiallyApplicableRule(Index, R), index(Index).
 true(Index, X) :- potentiallyApplicableRule(Index, R), head(Index, R, X),                                                                  % opt_mod: rules with satisfied bodies fire
                   true(Index, Y) : bodyP(Index, R, Y);
                   false(Index, Y) : bodyN(Index, R, Y).
@@ -28,7 +28,7 @@ dep(Index, X, Y) :- dirdep(Index, X, Y), dirdep(Index, Y, X).
 %dep(Index, X, Y) :- true(Index, X), true(Index, Y).
 
 % guess derivation sequence
-derivationSeq(Index, X, Y) | derivationSeq(Index, Y, X) :- true(Index, X), true(Index, Y), X != Y, dep(Index, X, Y), index(Index).
+derivationSeq(Index, X, Y) | derivationSeq(Index, Y, X) :- true(Index, X), true(Index, Y), X < Y, dep(Index, X, Y), index(Index).
 derivationSeq(Index, X, Z) :- derivationSeq(Index, X, Y), derivationSeq(Index, Y, Z), dep(Index, X, Z), index(Index).
 
 % To eliminate redundant solutions in the non-saturated case, we require atoms to be derived in lexicographic order whenever possible.
@@ -51,7 +51,7 @@ notApp(Index, R) :- head(Index, R, X1), bodyP(Index, R, X2), derivationSeq(Index
 
 % check answer set candidate
 noAS(Index) :- true(Index, X), notApp(Index, R) : head(Index, R, X), index(Index).                                                         % guess is not a valid answer set if positive atom cannot be justified by a rule (minimality)
-%noAS(Index) :- inReduct(Index, R), head(Index, R, X), false(Index, X), true(Index, Y) : bodyP(Index, R, Y); index(Index).                 % guess is not a valid answer set if a rule is unsatisfied
+%noAS(Index) :- inReduct(Index, R), head(Index, R, X), false(Index, X), true(Index, Y) : bodyP(Index, R, Y); index(Index).                 % guess is not a valid answer set if a rule is unsatisfied (not necessary with opt_mod)
 
 % ----- saturate -----
 true(Index, X) :- atom(Index, X), noAS(Index), index(Index).
