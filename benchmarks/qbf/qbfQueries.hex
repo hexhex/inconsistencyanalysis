@@ -1,4 +1,4 @@
-t(X) v f(X) :- exists(X).
+t(X) | f(X) :- exists(X).
 
 input(t(X)) :- t(X).
 input(f(X)) :- f(X).

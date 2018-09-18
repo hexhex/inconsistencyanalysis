@@ -7,9 +7,9 @@ rule(Index, R) :- bodyP(Index, R, X), index(Index).
 rule(Index, R) :- bodyN(Index, R, X), index(Index).
 
 % ----- Optimization: compute potentially applicable rules -----
-potentiallyDerivable(Index, X) :- head(Index, R, X), potentiallyApplicableRule(Index, R).
-potentiallyApplicableRule(Index, R) :- rule(Index, R), potentiallyDerivable(Index, X) : bodyP(Index, R, X). 
-%potentiallyApplicableRule(Index, R) :- rule(Index, R).                                                                                     % opt_pa
+%potentiallyDerivable(Index, X) :- head(Index, R, X), potentiallyApplicableRule(Index, R).
+%potentiallyApplicableRule(Index, R) :- rule(Index, R), potentiallyDerivable(Index, X) : bodyP(Index, R, X). 
+potentiallyApplicableRule(Index, R) :- rule(Index, R).                                                                                     % opt_pa
 
 % ----- guess -----
 true(Index, X) | false(Index, X) :- atom(Index, X), index(Index).
@@ -47,11 +47,11 @@ derivationSeq(Index, X, Z) :- derivationSeq(Index, X, Y), derivationSeq(Index, Y
 % identify rules which are not applicable for justifying its head atom being true
 notApp(Index, R) :- outReduct(Index, R), index(Index).                                                                                     % rule is not applicable if it is not in the reduct
 notApp(Index, R) :- inReduct(Index, R), bodyP(Index, R, X), false(Index, X), index(Index).                                                 % rule is not applicable if the positive body is not satisfied
-notApp(Index, R):- head(Index, R, X1), bodyP(Index, R, X2), derivationSeq(Index, X1, X2).                                                  % rule is not applicable if head is derived earlier than one of the positive body atoms
+notApp(Index, R) :- head(Index, R, X1), bodyP(Index, R, X2), derivationSeq(Index, X1, X2).                                                 % rule is not applicable if head is derived earlier than one of the positive body atoms
 
 % check answer set candidate
 noAS(Index) :- true(Index, X), notApp(Index, R) : head(Index, R, X), index(Index).                                                         % guess is not a valid answer set if positive atom cannot be justified by a rule (minimality)
-%noAS(Index) :- inReduct(Index, R), head(Index, R, X), false(Index, X), true(Index, Y) : bodyP(Index, R, Y), index(Index).                  % guess is not a valid answer set if a rule is unsatisfied
+%noAS(Index) :- inReduct(Index, R), head(Index, R, X), false(Index, X), true(Index, Y) : bodyP(Index, R, Y); index(Index).                 % guess is not a valid answer set if a rule is unsatisfied
 
 % ----- saturate -----
 true(Index, X) :- atom(Index, X), noAS(Index), index(Index).
