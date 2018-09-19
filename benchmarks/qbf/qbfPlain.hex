@@ -13,3 +13,5 @@ sat :- term(1, X, 1, Y, 1, Z), t(X), t(Y), t(Z).
 t(X) :- sat, forall(X).
 f(X) :- sat, forall(X).
 :- not sat.
+
+#show t/1.

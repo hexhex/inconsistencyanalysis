@@ -47,11 +47,13 @@ else
 fi
 
 if [[ "$solver" = "dlvhex2" ]]; then
+	# remove #show directives
+	grep -v "#show" $inlinedprogram | sponge $inlinedprogram
 	dlvhex2 --silent $solverparam $encodingfile $inlinedprogram $instance
 elif [[ "$solver" = "potassco" ]]; then
-	clingo -n 0 $solverparam $encodingfile $inlinedprogram $instance | grep "Answer:" -A 1 | grep "Answer:" -v | sed 's/^/\{/; s/ /,/g; s/$/\}/'
+	clingo -n 0 --project=show $solverparam $encodingfile $inlinedprogram $instance 2>/dev/null | grep "Answer:" -A 1 | grep "Answer:" -v | sed 's/^/\{/; s/ /,/g; s/$/\}/'
 elif [[ "$solver" = "potasscoground" ]]; then
-        clingo --text -n 0 $solverparam $encodingfile $inlinedprogram $instance
+        clingo --text -n 0 --project=show $solverparam $encodingfile $inlinedprogram $instance
 else
 	echo "Unknown solver: $solver" 1>&2
 	rm $inlinedprogram

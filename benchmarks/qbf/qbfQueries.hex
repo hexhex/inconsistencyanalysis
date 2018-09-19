@@ -8,3 +8,5 @@ input(term(X, Y, Z, NX, NY, NZ)) :- term(X, Y, Z, NX, NY, NZ).
 
 allsat :- CHEX[qbfCheckForall, input, sat]().
 :- not allsat.
+
+#show t/1.

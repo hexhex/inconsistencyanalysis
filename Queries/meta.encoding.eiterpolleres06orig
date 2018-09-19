@@ -7,8 +7,8 @@ lastRule(Index,R,L) :- rule(Index,R,L), not ruleAfter(Index,R,L), index(Index).
 nextRule(Index,R1,R2,L) :- rule(Index,R1,L), rule(Index,R2,L), R1 < R2, not ruleBetween(Index,R1,R2,L), index(Index).
 before(Index,h,R,L) :- head(Index,R,L), head(Index,R,L1), L1 < L, index(Index).
 after(Index,h,R,L) :- head(Index,R,L), head(Index,R,L1), L < L1, index(Index).
-between(Index,h,R,L,L2) :- head(Index,L,R), head(Index,L1,R), head(Index,R,L2), L<L1, L1<L2, index(Index).
-next(Index,h,R,L,L1) :- head(Index,L,R), head(Index,R,L1), L < L1, not between(Index,h,R,L,L1), index(Index).
+between(Index,h,R,L,L2) :- head(Index,R,L), head(Index,R,L1), head(Index,R,L2), L<L1, L1<L2, index(Index).
+next(Index,h,R,L,L1) :- head(Index,R,L), head(Index,R,L1), L < L1, not between(Index,h,R,L,L1), index(Index).
 first(Index,h,R,L) :- head(Index,R,L), not before(Index,h,R,L), index(Index).
 last(Index,h,R,L) :- head(Index,R,L), not after(Index,h,R,L), index(Index).
 before(Index,p,R,L) :- bodyP(Index,R,L), bodyP(Index,R,L1), L1 < L, index(Index).
@@ -30,7 +30,7 @@ ninS(Index,L) :- bodyN(Index,R,L), not hlit(Index,L), index(Index).
 dep(Index,L,L1) :- head(Index,R,L), bodyP(Index,R,L1), inS(Index,L), inS(Index,L1).                                       % begin optimization opt_dep
 dep(Index,L,L2) :- head(Index,R,L), bodyP(Index,R,L1), dep(Index,L1,L2), inS(Index,L).                                    % end optimization opt_dep
 phi(Index,L,L1) | phi(Index,L1,L) :- inS(Index,L), inS(Index,L1), L < L1, dep(Index,L,L1), dep(Index,L1,L), index(Index). % atoms "dep(Index,L,L1), dep(Index,L1,L)": optimization opt_dep
-phi(Index,L,L2) :- phi(Index,L,L1), phi(Index,L1,L2), index(Index).
+phi(Index,L,L2) :- phi(Index,L,L1), phi(Index,L1,L2), index(Index), dep(L,L2).
 allInSUpto(Index,p,R,Min) :- inS(Index,Min), first(Index,p,R,Min), index(Index).
 allInSUpto(Index,p,R,L1) :- inS(Index,L1), allInSUpto(Index,p,R,L), next(Index,p,R,L,L1), index(Index).
 allInS(Index,p,R) :- allInSUpto(Index,p,R,Max),last(Index,p,R,Max), index(Index).

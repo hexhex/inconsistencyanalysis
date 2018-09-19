@@ -12,7 +12,7 @@ rule(Index, R) :- bodyN(Index, R, X), index(Index).
 potentiallyApplicableRule(Index, R) :- rule(Index, R).                                                                                     % opt_pa
 
 % ----- guess -----
-true(Index, X) | false(Index, X) :- atom(Index, X), head(Index, R, X), potentiallyApplicableRule(Index, R), index(Index).
+true(Index, X) | false(Index, X) :- atom(Index, X), index(Index).
 true(Index, X) :- potentiallyApplicableRule(Index, R), head(Index, R, X),                                                                  % opt_mod: rules with satisfied bodies fire
                   true(Index, Y) : bodyP(Index, R, Y);
                   false(Index, Y) : bodyN(Index, R, Y).
