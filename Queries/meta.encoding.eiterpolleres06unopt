@@ -27,9 +27,8 @@ hlit(Index,L) :- rule(Index,R,L), index(Index).
 inS(Index,L) | ninS(Index,L) :- hlit(Index,L), index(Index).
 ninS(Index,L) :- bodyP(Index,R,L), not hlit(Index,L), index(Index).
 ninS(Index,L) :- bodyN(Index,R,L), not hlit(Index,L), index(Index).
-dep(Index,L,L1) :- head(Index,R,L), bodyP(Index,R,L1), inS(Index,L), inS(Index,L1).                                       % begin optimization opt_dep
-dep(Index,L,L2) :- head(Index,R,L), bodyP(Index,R,L1), dep(Index,L1,L2), inS(Index,L).                                    % end optimization opt_dep
-phi(Index,L,L1) | phi(Index,L1,L) :- inS(Index,L), inS(Index,L1), L < L1, dep(Index,L,L1), dep(Index,L1,L), index(Index). % atoms "dep(Index,L,L1), dep(Index,L1,L)": optimization opt_dep
+inS(Index,L) :- rule(Index,R,L), inS(Index,L1) : bodyP(Index,R,L1); ninS(Index,L1) : bodyN(Index,R,L1); index(Index).
+phi(Index,L,L1) | phi(Index,L1,L) :- inS(Index,L), inS(Index,L1), L < L1, dep(Index,L,L1).
 phi(Index,L,L2) :- phi(Index,L,L1), phi(Index,L1,L2), index(Index), dep(L,L2).
 allInSUpto(Index,p,R,Min) :- inS(Index,Min), first(Index,p,R,Min), index(Index).
 allInSUpto(Index,p,R,L1) :- inS(Index,L1), allInSUpto(Index,p,R,L), next(Index,p,R,L,L1), index(Index).
