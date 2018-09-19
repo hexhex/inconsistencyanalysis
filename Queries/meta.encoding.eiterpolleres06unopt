@@ -28,8 +28,8 @@ inS(Index,L) | ninS(Index,L) :- hlit(Index,L), index(Index).
 ninS(Index,L) :- bodyP(Index,R,L), not hlit(Index,L), index(Index).
 ninS(Index,L) :- bodyN(Index,R,L), not hlit(Index,L), index(Index).
 inS(Index,L) :- rule(Index,R,L), inS(Index,L1) : bodyP(Index,R,L1); ninS(Index,L1) : bodyN(Index,R,L1); index(Index).
-phi(Index,L,L1) | phi(Index,L1,L) :- inS(Index,L), inS(Index,L1), L < L1, dep(Index,L,L1).
-phi(Index,L,L2) :- phi(Index,L,L1), phi(Index,L1,L2), index(Index), dep(L,L2).
+phi(Index,L,L1) | phi(Index,L1,L) :- inS(Index,L), inS(Index,L1), L < L1.
+phi(Index,L,L2) :- phi(Index,L,L1), phi(Index,L1,L2), index(Index).
 allInSUpto(Index,p,R,Min) :- inS(Index,Min), first(Index,p,R,Min), index(Index).
 allInSUpto(Index,p,R,L1) :- inS(Index,L1), allInSUpto(Index,p,R,L), next(Index,p,R,L,L1), index(Index).
 allInS(Index,p,R) :- allInSUpto(Index,p,R,Max),last(Index,p,R,Max), index(Index).
