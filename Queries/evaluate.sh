@@ -8,6 +8,7 @@ if [[ "$1" = "-h" ]] | [[ $# -lt 3 ]]; then
          eiterpolleres06 (TPLP 06 mod+dep)
          eiterpolleres06revised (TPLP 06 mod+dep, newly encoded with modern language features)
          redl18 (new encoding)
+         faberwoltran11 (based on manifold programs)
   \$3: Main program
   \$4: Instance file(s)
   \$5ff: Additional parameters to the solver"
@@ -39,6 +40,11 @@ elif [[ "$encoding" = "redl18" ]]; then
 	# inline query atoms in the main file
 	$mydir/inlineQueries.sh $mainprog > $inlinedprogram
 	encodingfile="$mydir/meta.encoding.redl18"
+elif [[ "$encoding" = "faberwoltran11" ]]; then
+        # inline query atoms in the main file
+        $mydir/inlineQueriesManifold.sh $mainprog > $inlinedprogram
+        encodingfile="$mydir/meta.encoding.faberwoltran11"
+	solverparam="--opt-mode=optN $solverparam"
 elif [[ "$encoding" = "external" ]]; then
 	if [[ "$solver" != "dlvhex2" ]]; then
 		echo "encoding \"externl\" can only be used with solver \"dlvhex2\"" 1>&2 
@@ -59,7 +65,7 @@ if [[ "$solver" = "dlvhex2" ]]; then
 	grep -v "#show" $inlinedprogram | sponge $inlinedprogram
 	dlvhex2 --silent $solverparam $encodingfile $inlinedprogram $instance
 elif [[ "$solver" = "potassco" ]]; then
-	clingo -n 0 --project=show $solverparam $encodingfile $inlinedprogram $instance 2>/dev/null | grep "Answer:" -A 1 | grep "Answer:" -v | sed 's/^/\{/; s/ /,/g; s/$/\}/'
+	clingo -n 0 --project=show $solverparam $encodingfile $inlinedprogram $instance 2>/dev/null | grep "Answer:" -A 1 --no-group-separator | grep "Answer:" -v --no-group-separator | sed 's/^/\{/; s/ /,/g; s/$/\}/'
 elif [[ "$solver" = "potasscoground" ]]; then
         clingo --text -n 0 --project=show $solverparam $encodingfile $inlinedprogram $instance
 else
