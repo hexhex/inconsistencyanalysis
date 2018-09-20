@@ -12,7 +12,7 @@ bodyPCopy(Index,Atom,R,BP) :- bodyP(Index,R,BP), atom(Index,Atom).
 bodyNCopy(Index,Atom,R,BN) :- bodyN(Index,R,BN), atom(Index,Atom).
 
 % evaluate original program
-true(Index,Atom,H) :- headCopy(Index,Atom,R,H), true(Index,Atom,BP) : bodyPCopy(Index,Atom,R,BP); not true(Index,Atom,BN) : bodyNCopy(Index,Atom,R,BN). %; consistent(Index), index(Index).
+true(Index,Atom,H) :- headCopy(Index,Atom,R,H), true(Index,Atom,BP) : bodyPCopy(Index,Atom,R,BP); not true(Index,Atom,BN) : bodyNCopy(Index,Atom,R,BN); consistent(Index), index(Index).
 
 % subprogram can be consistent or inconsistent
 consistent(Index) :- not inconsistent(Index), index(Index).

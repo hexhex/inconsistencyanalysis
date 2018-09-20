@@ -19,16 +19,16 @@ do
 	$mydir/encodeProgram.sh $filename $filename
 	if [[ $querytype == "brave" ]]; then
                 if [[ $sign == "pos" ]]; then
-			echo "#minimize{1:not true($filename, Atom, Atom), atom($filename, Atom); 1:inconsistent($filename)}."
+			echo "#minimize{1@0, Atom : not true($filename, Atom, Atom), atom($filename, Atom); 1:inconsistent($filename)}."
 		else
-                        echo "#minimize{1:true($filename, Atom, Atom), atom($filename, Atom); 1:inconsistent($filename)}."
+                        echo "#minimize{1@0, Atom : true($filename, Atom, Atom), atom($filename, Atom); 1:inconsistent($filename)}."
 		fi
 	fi
         if [[ $querytype == "cautious" ]]; then
                 if [[ $sign == "pos" ]]; then
-                        echo "#minimize{1:true($filename,Atom,Atom), atom($filename, Atom); 1:inconsistent($filename)}."
+                        echo "#minimize{1@0, Atom : true($filename,Atom,Atom), atom($filename, Atom); 1:inconsistent($filename)}."
 		else
-                        echo "#minimize{1:not true($filename,Atom,Atom), atom($filename, Atom); 1:inconsistent($filename)}."
+                        echo "#minimize{1@0, Atom : not true($filename,Atom,Atom), atom($filename, Atom); 1:inconsistent($filename)}."
 		fi
 		echo "true($filename, Atom, Atom) :- inconsistent($filename), atom($filename, Atom)."
         fi
