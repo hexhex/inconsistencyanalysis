@@ -13,9 +13,9 @@ potentiallyApplicableRule(Index, R) :- rule(Index, R).
 
 % ----- guess -----
 true(Index, X) | false(Index, X) :- atom(Index, X), index(Index).
-true(Index, X) :- potentiallyApplicableRule(Index, R), head(Index, R, X),                                                                                                               % optimization: rules with satisfied bodies fire
-                  true(Index, Y) : bodyP(Index, R, Y);
-                  false(Index, Y) : bodyP(Index, R,Y).
+%true(Index, X) :- potentiallyApplicableRule(Index, R), head(Index, R, X),                                                                                                               % optimization: rules with satisfied bodies fire
+%                  true(Index, Y) : bodyP(Index, R, Y);
+%                  false(Index, Y) : bodyP(Index, R,Y).
 
 % ----- check -----
 inReduct(Index, R) :- potentiallyApplicableRule(Index, R), false(Index, X) : bodyN(Index, R, X), index(Index).
