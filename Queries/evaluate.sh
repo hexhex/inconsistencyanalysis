@@ -26,19 +26,19 @@ inlinedprogram=$(mktemp)
 
 if [[ "$encoding" = "eiterpolleres06unopt" ]]; then
 	# inline query atoms in the main file
-	$mydir/inlineQueries.sh $mainprog > $inlinedprogram
+	$mydir/inlineQueriesSaturation.sh $mainprog > $inlinedprogram
 	encodingfile="$mydir/meta.encoding.eiterpolleres06unopt"
 elif [[ "$encoding" = "eiterpolleres06" ]]; then
         # inline query atoms in the main file
-        $mydir/inlineQueries.sh $mainprog > $inlinedprogram
+        $mydir/inlineQueriesSaturation.sh $mainprog > $inlinedprogram
         encodingfile="$mydir/meta.encoding.eiterpolleres06"
 elif [[ "$encoding" = "eiterpolleres06revised" ]]; then
         # inline query atoms in the main file
-        $mydir/inlineQueries.sh $mainprog > $inlinedprogram
+        $mydir/inlineQueriesSaturation.sh $mainprog > $inlinedprogram
         encodingfile="$mydir/meta.encoding.eiterpolleres06revised"
 elif [[ "$encoding" = "redl18" ]]; then
 	# inline query atoms in the main file
-	$mydir/inlineQueries.sh $mainprog > $inlinedprogram
+	$mydir/inlineQueriesSaturation.sh $mainprog > $inlinedprogram
 	encodingfile="$mydir/meta.encoding.redl18"
 elif [[ "$encoding" = "faberwoltran11" ]]; then
         # inline query atoms in the main file
