@@ -33,6 +33,13 @@ do
 		echo "true($filename, Atom, Atom) :- inconsistent($filename), atom($filename, Atom)."
         fi
 
+	# make sure that the query atom contains in the subprogram by introducing a dummy rule without effects
+	echo "head($filename,dummy,$queryatom)."
+        echo "bodyP($filename,dummy,$queryatom)."
+
+	# we want to know if the query atom is a brave resp. cautious consequence
+	echo "copy($filename, $queryatom)."
+
 	# extract query answer
 	echo "query($filename) :- true($filename, $queryatom, $queryatom)."
 

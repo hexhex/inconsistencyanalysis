@@ -7,12 +7,10 @@ rule(Index, R) :- bodyP(Index, R, X), index(Index).
 rule(Index, R) :- bodyN(Index, R, X), index(Index).
 
 % copy program for each atom
-headCopy(Index,Atom,R,H) :- head(Index,R,H), atom(Index,Atom).
-bodyPCopy(Index,Atom,R,BP) :- bodyP(Index,R,BP), atom(Index,Atom).
-bodyNCopy(Index,Atom,R,BN) :- bodyN(Index,R,BN), atom(Index,Atom).
+%copy(Index, Atom) :- atom(Index,Atom).
 
 % evaluate original program
-true(Index,Atom,H) :- headCopy(Index,Atom,R,H), true(Index,Atom,BP) : bodyPCopy(Index,Atom,R,BP); not true(Index,Atom,BN) : bodyNCopy(Index,Atom,R,BN); consistent(Index), index(Index).
+true(Index,Atom,H) :- copy(Index, Atom), head(Index,R,H), true(Index,Atom,BP) : bodyP(Index,R,BP); not true(Index,Atom,BN) : bodyN(Index,R,BN); consistent(Index), index(Index).
 
 % subprogram can be consistent or inconsistent
 consistent(Index) :- not inconsistent(Index), index(Index).
