@@ -1,1 +1,0 @@
-p(a) :- CHEX[naf, p, q]().

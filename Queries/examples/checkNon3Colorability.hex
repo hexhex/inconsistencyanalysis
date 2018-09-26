@@ -1,1 +1,0 @@
-non3col :- CHEX[check3Colorings, i, invalid]().
